@@ -1,4 +1,4 @@
-# vue-datepicker
+# vue-DatePicker
 
 > A Vue.js project
 
