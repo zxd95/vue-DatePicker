@@ -1,6 +1,6 @@
 const getFormatDate = (date) => {
   let year = date.getFullYear()
-  let month = date.getMonth() + 1
+  let month = date.getMonth()
   let day = date.getDate()
 
   return {
@@ -10,6 +10,11 @@ const getFormatDate = (date) => {
   }
 }
 
+const getDate = (year, month, day) => {
+  return new Date(year, month, day)
+}
+
 export {
-  getFormatDate
+  getFormatDate,
+  getDate
 }
