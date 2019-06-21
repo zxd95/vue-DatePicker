@@ -17,7 +17,19 @@
           <span>&gt;&gt;</span>
         </div>
         <div class="pannel-concent">
-          内容
+          <div class="days">
+            <!-- 循环 6 x 7 表格 -->
+            <div v-for="i in 6" :key="i">
+              <span
+                v-for="j in 7"
+                :key="j"
+                class="cell"
+                :class="[{notCurrentMonth: !isCurrentMonth(visibleDays[(i - 1) * 7 + (j - 1)].getDate())}]"
+              >
+                {{ visibleDays[(i - 1) * 7 + (j - 1)].getDate() }}
+              </span>
+            </div>
+          </div>
         </div>
         <div class="pannel-footer">
           今天
@@ -71,7 +83,20 @@ export default {
   computed: {
     formatDate () { // 格式化日期 yyyy-mm-dd
       let { year, month, day } = utlis.getFormatDate(this.value)
-      return `${year}-${month}-${day}`
+      return `${year}-${month + 1}-${day}`
+    },
+    visibleDays () { // 获取当前是周几
+      let { year, month } = utlis.getFormatDate(this.value)
+      let currentFirstDay = utlis.getDate(year, month, 1) // yyyy-mm-01
+      let week = currentFirstDay.getDay()
+      let startDay = currentFirstDay - week * 60 * 60 * 1000 * 24 // 开始日期
+      let arr = []
+
+      for (let i = 0; i < 42; i++) { // 循环42天
+        arr.push(new Date(startDay + i * 60 * 60 * 1000 * 24))
+      }
+
+      return arr
     }
   },
   methods: {
@@ -80,6 +105,9 @@ export default {
     },
     handleBlur () {
       this.isVisible = false
+    },
+    isCurrentMonth (date) {
+      
     }
   }
 }
@@ -109,6 +137,41 @@ export default {
           outline: none;
           box-shadow: none;
         }
+    }
+
+    .pannel {
+      width: 32 * 7px;
+      position: absolute;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 2px;
+
+      .pannel-nav {
+        display: flex;
+        justify-content: space-around;
+        height: 30px;
+
+        span {
+          cursor: pointer;
+          user-select: none;
+        }
+      }
+
+      .pannel-concent {
+        .cell {
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          width: 32px;
+          height: 32px;
+          text-align: center;
+        }
+      }
+
+      .pannel-footer {
+        height: 30px;
+        text-align: center;
+      }
     }
   }
 
