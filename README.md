@@ -1,6 +1,6 @@
 # vue-DatePicker
 
-> Vue2.x 封装日期选择器组件实战
+> Vue2.x 封装日期选择组件实战
 
 ## Build Setup
 
