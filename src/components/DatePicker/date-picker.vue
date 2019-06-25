@@ -136,12 +136,12 @@ export default {
       this.handleBlur()
     },
     prevMonth () {
-      let d = utlis.Date(this.time.year, this.time.month, 1)
+      let d = utlis.getDate(this.time.year, this.time.month, 1)
       d.setMonth(d.getMonth() - 1)
       this.time = utlis.getFormatDate(d)
     },
     nextMonth () {
-      let d = utlis.Date(this.time.year, this.time.month, 1)
+      let d = utlis.getDate(this.time.year, this.time.month, 1)
       d.setMonth(d.getMonth() + 1)
       this.time = utlis.getFormatDate(d)
     }
