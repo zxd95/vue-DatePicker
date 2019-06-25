@@ -10,21 +10,27 @@
       <div v-if="isVisible" class="pannel">
         <div class="pannel-nav">
           <span>&lt;</span>
-          <span>&lt;&lt;</span>
-          <span>xxxx年</span>
-          <span>xx月</span>
+          <span @click="prevMonth">&lt;&lt;</span>
+          <span>{{ time.year }}年</span>
+          <span>{{ time.month + 1 }}月</span>
+          <span @click="nextMonth">&gt;&gt;</span>
           <span>&gt;</span>
-          <span>&gt;&gt;</span>
         </div>
         <div class="pannel-concent">
           <div class="days">
+            <span v-for="w in weekDays" :key="w" class="cell">{{ w }}</span>
             <!-- 循环 6 x 7 表格 -->
             <div v-for="i in 6" :key="i">
               <span
                 v-for="j in 7"
                 :key="j"
-                class="cell"
-                :class="[{notCurrentMonth: !isCurrentMonth(visibleDays[(i - 1) * 7 + (j - 1)].getDate())}]"
+                class="cell cell-days"
+                :class="[
+                  { notCurrentMonth: !isCurrentMonth(visibleDays[(i - 1) * 7 + (j - 1)]) },
+                  { today: isToday(visibleDays[(i - 1) * 7 + (j - 1)]) },
+                  { select: isSelect(visibleDays[(i - 1) * 7 + (j - 1)]) }
+                ]"
+                @click="chooseDate(visibleDays[(i - 1) * 7 + (j - 1)])"
               >
                 {{ visibleDays[(i - 1) * 7 + (j - 1)].getDate() }}
               </span>
@@ -51,7 +57,10 @@ export default {
     }
   },
   data () {
+    let { year, month } = utlis.getFormatDate(this.value)
     return {
+      weekDays: ['日', '一', '二', '三', '四', '五', '六'],
+      time: { year, month },
       placeholderText: '请选择日期',
       isVisible: false // 日期面板显隐
     }
@@ -82,7 +91,7 @@ export default {
   },
   computed: {
     formatDate () { // 格式化日期 yyyy-mm-dd
-      let { year, month, day } = utlis.getFormatDate(this.value)
+      let { year, month, day } = utlis.getFormatDate(utlis.getDate(this.time.year, this.time.month, 1))
       return `${year}-${month + 1}-${day}`
     },
     visibleDays () { // 获取当前是周几
@@ -107,7 +116,34 @@ export default {
       this.isVisible = false
     },
     isCurrentMonth (date) {
-      
+      let { year, month } = utlis.getFormatDate(utlis.getDate(this.time.year, this.time.month, 1))
+      let { year: y, month: m } = utlis.getFormatDate(date)
+      return year === y && month === m
+    },
+    isToday (date) {
+      let { year, month, day } = utlis.getFormatDate(new Date())
+      let { year: y, month: m, day: d } = utlis.getFormatDate(date)
+      return year === y && month === m && day === d
+    },
+    isSelect (date) {
+      let { year, month, day } = utlis.getFormatDate(this.value)
+      let { year: y, month: m, day: d } = utlis.getFormatDate(date)
+      return year === y && month === m && day === d
+    },
+    chooseDate (date) {
+      this.time = utlis.getFormatDate(date)
+      this.$emit('input', date)
+      this.handleBlur()
+    },
+    prevMonth () {
+      let d = utlis.Date(this.time.year, this.time.month, 1)
+      d.setMonth(d.getMonth() - 1)
+      this.time = utlis.getFormatDate(d)
+    },
+    nextMonth () {
+      let d = utlis.Date(this.time.year, this.time.month, 1)
+      d.setMonth(d.getMonth() + 1)
+      this.time = utlis.getFormatDate(d)
     }
   }
 }
@@ -164,7 +200,23 @@ export default {
           align-items: center;
           width: 32px;
           height: 32px;
-          text-align: center;
+          font-weight: 400;
+          box-sizing: border-box;
+        }
+
+        .cell-days:hover, .select {
+          border: 1px solid #1890ff;
+          border-radius: 4px;
+        }
+
+        .notCurrentMonth {
+          color: gray;
+        }
+
+        .today {
+          background-color: #1890ff;
+          color: #fff;
+          border-radius: 4px;
         }
       }
 
